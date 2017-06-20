@@ -6,19 +6,33 @@ public class Enemy : MonoBehaviour {
 
     [SerializeField]
     private int Hp;
-
-	// Use this for initialization
-	void Start () {
-		
+    [SerializeField]
+    private float InstanceHormingTime;
+    [SerializeField]
+    private GameObject HormingObj;
+    private float CopyTime;
+    private GameObject WorldTimeObj;
+    private WorldTime worldtime;
+    // Use this for initialization
+    void Start () {
+        WorldTimeObj = GameObject.Find("Master");
+        worldtime = WorldTimeObj.GetComponent<WorldTime>();
+        CopyTime = InstanceHormingTime;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+        float WorldTimeSpeed = worldtime.GetTime();
+        InstanceHormingTime -= Time.deltaTime * WorldTimeSpeed;
+        if(InstanceHormingTime<=0)
+        {
+            InstanceHormingTime = CopyTime;
+            Instantiate(HormingObj,transform.position,HormingObj.transform.rotation);
+        }
 	}
-    void OnCollisionEnter2D(Collision2D col)
+    void OnTriggerEnter2D(Collider2D col)
     {
-        Debug.Log("hogehoge");
+      //  Debug.Log("hogehoge");
         if (col.gameObject.tag == "Weapon")
         {
             Hp--;

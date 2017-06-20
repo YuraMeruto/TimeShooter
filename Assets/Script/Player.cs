@@ -35,10 +35,11 @@ public class Player : MonoBehaviour
     void MoveResult()
     {
         MoveKeyState();
+        SpecialMoveState();
         SkillKey();
         Move();
     }
-    void MoveKeyState()
+    void MoveKeyState()//WASDによる上下左右の移動
     {
         if (Input.GetKey(KeyCode.W) && MoveKey != 2)
         {
@@ -62,15 +63,16 @@ public class Player : MonoBehaviour
             MovePos.x += MoveForce;
         }
 
-
-
         if (Input.GetKey(KeyCode.Space) && BulletInterbal <= 0)
         {
             Instantiate(Bullet, transform.position, Quaternion.identity);
             BulletInterbal = CopyBulletInterbal;
         }
 
-        else if (Input.GetKeyDown(KeyCode.DownArrow) && GetComponent<SpriteRenderer>().enabled == true)//下に瞬間移動
+    }
+    void SpecialMoveState()//通常移動以外の移動の仕方
+    {
+        if (Input.GetKeyDown(KeyCode.DownArrow) && momentmove == 0)//下に瞬間移動
         {
             GetComponent<SpriteRenderer>().enabled = false;
             MovePos = transform.position;
@@ -83,15 +85,23 @@ public class Player : MonoBehaviour
     }
     void SkillKey()
     {
-        if (Input.GetKey(KeyCode.Q))//時を止めるスキル
+        if (Input.GetKeyDown(KeyCode.Q))//時を止めるスキル
         {
             MoveKey = 1;
-            Master.GetComponent<WorldTime>().SetTime(0.1f);
+            Master.GetComponent<WorldTime>().SetTime(0.05f);
             MainCamera.GetComponent<Posteffect>().Setenabled(true);
             IsWorldTime = false;
         }
+
+        else if (Input.GetKeyUp(KeyCode.Q))
+        {
+            MoveKey = 1;
+            Master.GetComponent<WorldTime>().SetTime(1.0f);
+            MainCamera.GetComponent<Posteffect>().Setenabled(false);
+            IsWorldTime = true;
+        }
     }
-    void Move()
+    void Move()//押されたボタンの反映
     {
         MovePos.z = 0.0f;
         switch (MoveKey)
@@ -114,6 +124,7 @@ public class Player : MonoBehaviour
         BulletInterbal -= Time.deltaTime;
         TimeSkill();
     }
+
     void TimeSkill()
     {
         if (!IsWorldTime)
@@ -123,7 +134,7 @@ public class Player : MonoBehaviour
         if (WorldTime <= 0)
         {
             Master.GetComponent<WorldTime>().SetTime(1);
-            MainCamera.GetComponent<Posteffect>().Setenabled(false);
+            MainCamera.GetComponent<Posteffect>().Setenabled(false);           
         }
     }
 }

@@ -8,8 +8,11 @@ public class Bullet : MonoBehaviour {
     private float MoveForce;
     private GameObject WorldTimeObj;
     private WorldTime worldtime;
+    [SerializeField]
+    private float DestroyTime;
 	// Use this for initialization
 	void Start () {
+        Destroy(gameObject,DestroyTime);
         WorldTimeObj = GameObject.Find("Master");
         worldtime = WorldTimeObj.GetComponent<WorldTime>();
 	}
